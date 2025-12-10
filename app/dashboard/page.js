@@ -21,7 +21,7 @@ export default function Dashboard() {
               Overview
             </li>
             <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-              Users
+              Users overall
             </li>
             <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
               Analytics

@@ -21,8 +21,18 @@ if(!user){
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
-            const cookie = await cookies();
-            cookie.set("token", token, {httpOnly:true,secure:true, path:"/"});
+          const cookieStore =await cookies();
+   
+   cookieStore.set("token", token, {
+            httpOnly:true,
+            secure:true,
+            path:"/",
+            domain: process.env.COOKIE_DOMAIN,
+            maxAge:60*60*7*24,
+            sameSite:"lax"
+          });
+         
+
             return Response.json({message:"success"},{status:200});
         }else{return Response.json({message:"login failed"},{status:401});}
         
