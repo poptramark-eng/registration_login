@@ -7,9 +7,12 @@ import Link from "next/link";
 export default function Login() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
     const values = new FormData(e.target);
 
@@ -22,7 +25,7 @@ export default function Login() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(profile),
-      credentials:"include",
+      credentials: "include",
     });
 
     if (res.status === 200) {
@@ -33,8 +36,9 @@ export default function Login() {
     if (res.status === 404 || res.status === 401) {
       const data = await res.json();
       setError(data.message);
-      return;
     }
+
+    setLoading(false);
   };
 
   return (
@@ -44,7 +48,6 @@ export default function Login() {
         className="w-full max-w-md bg-white p-8 rounded-lg border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 ease-out transform hover:-translate-y-1 animate-fadeIn"
       >
 
-        {/* ✅ Tailwind Alert */}
         {error && (
           <div className="mb-4 flex items-center gap-3 rounded-md bg-red-100 border border-red-300 text-red-700 px-4 py-3">
             <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
@@ -64,9 +67,8 @@ export default function Login() {
         <input
           type="email"
           name="email"
-          id="email"
           placeholder="you@example.com"
-          className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F1F1F] text-[#1F1F1F] placeholder:text-gray-400 transition-all duration-200 ease-in-out hover:border-[#1F1F1F]"
+          className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F1F1F]"
         />
 
         <label className="block mb-2 text-sm font-medium text-[#1F1F1F]">
@@ -75,18 +77,28 @@ export default function Login() {
         <input
           type="password"
           name="password"
-          id="password"
           placeholder="Enter your password"
-          className="w-full mb-6 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F1F1F] text-[#1F1F1F] placeholder:text-gray-400 transition-all duration-200 ease-in-out hover:border-[#1F1F1F]"
+          className="w-full mb-6 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1F1F1F]"
         />
 
-        <input
+        {/* ✅ Login Button with Loading State */}
+        <button
           type="submit"
-          value="Login"
-          className="w-full bg-[#1F1F1F] text-white py-2 rounded-md cursor-pointer hover:bg-black transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98]"
-        />
+          disabled={loading}
+          className={`w-full py-2 rounded-md text-white transition-all duration-300 ease-out transform 
+            ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#1F1F1F] hover:bg-black hover:scale-[1.02] active:scale-[0.98]"}
+          `}
+        >
+          {loading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Logging in...</span>
+            </div>
+          ) : (
+            "Login"
+          )}
+        </button>
 
-        {/* ✅ Redirect to Register */}
         <p className="mt-4 text-center text-sm text-gray-600">
           Don’t have an account?{" "}
           <Link href="/register" className="text-[#1F1F1F] font-semibold hover:underline">

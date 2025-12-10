@@ -7,16 +7,17 @@ import { useEffect, useState } from "react";
 export default function Form() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null; // ✅ Wait until client-side hydration is ready
+  if (!mounted) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const form = new FormData(e.target);
 
@@ -32,6 +33,7 @@ export default function Form() {
 
     if (!res.ok) {
       alert("Registration failed");
+      setLoading(false);
       return;
     }
 
@@ -95,15 +97,24 @@ export default function Form() {
           "
         />
 
-        <input
+        {/* ✅ Register Button With Loading State */}
+        <button
           type="submit"
-          value="Register"
-          className="
-            w-full bg-[#1F1F1F] text-white py-2 rounded-md cursor-pointer 
-            hover:bg-black transition-all duration-300 ease-out
-            transform hover:scale-[1.02] active:scale-[0.98]
-          "
-        />
+          disabled={loading}
+          className={`
+            w-full py-2 rounded-md text-white transition-all duration-300 ease-out transform
+            ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#1F1F1F] hover:bg-black hover:scale-[1.02] active:scale-[0.98]"}
+          `}
+        >
+          {loading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Registering...</span>
+            </div>
+          ) : (
+            "Register"
+          )}
+        </button>
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
